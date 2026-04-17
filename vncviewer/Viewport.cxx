@@ -63,12 +63,16 @@
 
 #include <FL/Fl_Menu.H>
 #include <FL/Fl_Menu_Button.H>
+#if !defined(__QNX__)
 #include <FL/x.H>
+#endif
 
 #if defined(WIN32)
 #include "KeyboardWin32.h"
 #elif defined(__APPLE__)
 #include "KeyboardMacOS.h"
+#elif defined(__QNX__)
+#include "KeyboardWayland.h"
 #else
 #include "KeyboardX11.h"
 #endif
@@ -105,6 +109,8 @@ Viewport::Viewport(int w, int h, CConn* cc_)
   keyboard = new KeyboardWin32(this);
 #elif defined(__APPLE__)
   keyboard = new KeyboardMacOS(this);
+#elif defined(__QNX__)
+  keyboard = new KeyboardWayland(this);
 #else
   keyboard = new KeyboardX11(this);
 #endif
@@ -537,8 +543,21 @@ int Viewport::handle(int event)
     return 1;
 
   case FL_KEYDOWN:
+#ifdef __QNX__
+    if (hasFocus()) {
+      WaylandKeyEvent ev = { FL_KEYBOARD, (unsigned)Fl::event_key() };
+      keyboard->handleEvent(&ev);
+    }
+#endif
+    return 1;
+
   case FL_KEYUP:
-    // Just ignore these as keys were handled in the event handler
+#ifdef __QNX__
+    if (hasFocus()) {
+      WaylandKeyEvent ev = { FL_KEYUP, (unsigned)Fl::event_key() };
+      keyboard->handleEvent(&ev);
+    }
+#endif
     return 1;
   }
 
