@@ -31,10 +31,10 @@ void Surface::clear(unsigned char r, unsigned char g, unsigned char b,
 void Surface::draw(int src_x, int src_y, int dst_x, int dst_y,
                    int dst_w, int dst_h)
 {
-  // D=3: reads R,G,B from bytes 0,1,2; byte 3 (A) skipped.
+  // D=4: 4 bytes per pixel (RGBA); FLTK reads R,G,B and skips A.
   // L=w*4: stride in bytes.
   fl_draw_image(data + (src_y * w + src_x) * 4,
-                dst_x, dst_y, dst_w, dst_h, 3, w * 4);
+                dst_x, dst_y, dst_w, dst_h, 4, w * 4);
 }
 
 void Surface::draw(Surface* dst, int src_x, int src_y,
