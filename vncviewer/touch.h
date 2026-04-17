@@ -22,7 +22,7 @@
 void enable_touch();
 void disable_touch();
 
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__QNX__)
 bool x11_grab_pointer(Window window);
 void x11_ungrab_pointer(Window window);
 #endif

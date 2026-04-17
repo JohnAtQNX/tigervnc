@@ -28,13 +28,15 @@
 #if defined(WIN32)
 #include <windows.h>
 #include <commctrl.h>
-#elif !defined(__APPLE__)
+#elif !defined(__APPLE__) && !defined(__QNX__)
 #include <X11/extensions/XInput2.h>
 #include <X11/extensions/XI2.h>
 #endif
 
 #include <FL/Fl.H>
+#if !defined(__QNX__)
 #include <FL/x.H>
+#endif
 
 #include <core/LogWriter.h>
 
@@ -43,7 +45,7 @@
 #include "BaseTouchHandler.h"
 #if defined(WIN32)
 #include "Win32TouchHandler.h"
-#elif !defined(__APPLE__)
+#elif !defined(__APPLE__) && !defined(__QNX__)
 #include "XInputTouchHandler.h"
 #endif
 
@@ -51,12 +53,16 @@
 
 static core::LogWriter vlog("Touch");
 
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__QNX__)
 static int xi_major;
-#endif
-
 typedef std::map<Window, class BaseTouchHandler*> HandlerMap;
 static HandlerMap handlers;
+#endif
+
+#if defined(WIN32)
+typedef std::map<HWND, class BaseTouchHandler*> HandlerMap;
+static HandlerMap handlers;
+#endif
 
 #if defined(WIN32)
 LRESULT CALLBACK win32WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam,
@@ -86,7 +92,7 @@ LRESULT CALLBACK win32WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam,
     return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 }
 
-#elif !defined(__APPLE__)
+#elif !defined(__APPLE__) && !defined(__QNX__)
 static void x11_change_touch_ownership(bool enable)
 {
   HandlerMap::const_iterator iter;
@@ -189,8 +195,7 @@ static int handleTouchEvent(void *event, void* /*data*/)
                  (int)GetLastError());
     }
   }
-#elif defined(__APPLE__)
-  // No touch support on macOS
+#elif defined(__APPLE__) || defined(__QNX__)
   (void)event;
 #else
   XEvent *xevent = (XEvent*)event;
@@ -244,7 +249,7 @@ static int handleTouchEvent(void *event, void* /*data*/)
 
 void enable_touch()
 {
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__QNX__)
   int ev, err;
   int major_ver, minor_ver;
 
