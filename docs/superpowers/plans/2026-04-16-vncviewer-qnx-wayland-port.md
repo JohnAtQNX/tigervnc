@@ -36,7 +36,7 @@
 
 **Files:** none (dependency setup)
 
-- [ ] **Step 1: Install xkbcommon development package**
+- [x] **Step 1: Install xkbcommon development package**
 
 ```bash
 sudo apk add libxkbcommon-dev
@@ -44,7 +44,7 @@ sudo apk add libxkbcommon-dev
 
 Expected: `OK: N packages, M dirs, K MiB`
 
-- [ ] **Step 2: Clone FLTK 1.4**
+- [x] **Step 2: Clone FLTK 1.4**
 
 ```bash
 git clone https://github.com/fltk/fltk.git -b branch-1.4 --depth 1 /tmp/fltk-src
@@ -52,7 +52,7 @@ git clone https://github.com/fltk/fltk.git -b branch-1.4 --depth 1 /tmp/fltk-src
 
 Expected: `Cloning into '/tmp/fltk-src'...` then `done.`
 
-- [ ] **Step 3: Configure FLTK with Wayland backend, X11 off**
+- [x] **Step 3: Configure FLTK with Wayland backend, X11 off**
 
 ```bash
 mkdir /tmp/fltk-build
@@ -72,7 +72,7 @@ Expected: `-- Build files have been written to: /tmp/fltk-build`
 Note: if cmake reports missing `wayland-protocols`, install via `sudo apk add wayland-protocols-dev`.
 If it reports missing `libdecor`, install `sudo apk add libdecor-dev` or add `-DOPTION_USE_SYSTEM_LIBDECOR=OFF`.
 
-- [ ] **Step 4: Build and install FLTK**
+- [x] **Step 4: Build and install FLTK**
 
 ```bash
 cmake --build /tmp/fltk-build -j$(nproc)
@@ -81,7 +81,7 @@ sudo cmake --install /tmp/fltk-build
 
 Expected: ends with `-- Installing: /usr/local/lib/libfltk.a` (and similar).
 
-- [ ] **Step 5: Verify FLTK is findable**
+- [x] **Step 5: Verify FLTK is findable**
 
 ```bash
 /usr/local/bin/fltk-config --version
@@ -89,7 +89,7 @@ Expected: ends with `-- Installing: /usr/local/lib/libfltk.a` (and similar).
 
 Expected: `1.4.x`
 
-- [ ] **Step 6: Commit checkpoint**
+- [x] **Step 6: Commit checkpoint**
 
 ```bash
 cd /data/home/qnxuser/dev/tigervnc
@@ -103,7 +103,7 @@ git commit --allow-empty -m "chore: FLTK 1.4 Wayland + xkbcommon installed at /u
 **Files:**
 - Modify: `vncviewer/Surface.h`
 
-- [ ] **Step 1: Replace the platform header include block**
+- [x] **Step 1: Replace the platform header include block**
 
 In `vncviewer/Surface.h`, find:
 
@@ -133,7 +133,7 @@ typedef struct CGImage* CGImageRef;
 #endif
 ```
 
-- [ ] **Step 2: Replace the platform member variable block**
+- [x] **Step 2: Replace the platform member variable block**
 
 Find:
 
@@ -165,7 +165,7 @@ Replace with:
 #endif
 ```
 
-- [ ] **Step 3: Verify the file compiles (syntax check only)**
+- [x] **Step 3: Verify the file compiles (syntax check only)**
 
 ```bash
 cd /data/home/qnxuser/dev/tigervnc
@@ -175,7 +175,7 @@ clang++ -std=gnu++11 -fsyntax-only -D__QNX__ -I. -Icommon \
 
 Expected: no output (no errors).
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add vncviewer/Surface.h
@@ -191,7 +191,7 @@ git commit -m "port: add __QNX__ branch to Surface.h (no XRender)"
 
 The pixel format used by `PlatformPixelBuffer` on QNX will be RGBA (R=byte0, G=byte1, B=byte2, A=byte3). `fl_draw_image` with D=3, L=width*4 reads bytes 0,1,2 as R,G,B and skips byte 3.
 
-- [ ] **Step 1: Create the file**
+- [x] **Step 1: Create the file**
 
 ```cpp
 // vncviewer/Surface_Wayland.cxx
@@ -342,7 +342,7 @@ void Surface::update(const Fl_RGB_Image* image)
 }
 ```
 
-- [ ] **Step 2: Syntax-check the new file**
+- [x] **Step 2: Syntax-check the new file**
 
 ```bash
 cd /data/home/qnxuser/dev/tigervnc
@@ -353,7 +353,7 @@ clang++ -std=gnu++11 -fsyntax-only -D__QNX__ -DHAVE_CONFIG_H \
 
 Expected: no errors.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add vncviewer/Surface_Wayland.cxx
@@ -368,7 +368,7 @@ git commit -m "port: add Surface_Wayland.cxx (RGBA buffer, fl_draw_image)"
 - Modify: `vncviewer/PlatformPixelBuffer.h`
 - Modify: `vncviewer/PlatformPixelBuffer.cxx`
 
-- [ ] **Step 1: Guard XShm/XImage includes and members in PlatformPixelBuffer.h**
+- [x] **Step 1: Guard XShm/XImage includes and members in PlatformPixelBuffer.h**
 
 Find:
 
@@ -418,7 +418,7 @@ protected:
 #endif
 ```
 
-- [ ] **Step 2: Add QNX branch to PlatformPixelBuffer.cxx constructor**
+- [x] **Step 2: Add QNX branch to PlatformPixelBuffer.cxx constructor**
 
 Find the entire constructor body:
 
@@ -503,7 +503,7 @@ PlatformPixelBuffer::PlatformPixelBuffer(int width, int height) :
 }
 ```
 
-- [ ] **Step 3: Add QNX branch to getDamage()**
+- [x] **Step 3: Add QNX branch to getDamage()**
 
 Find this block inside `getDamage()`:
 
@@ -555,7 +555,7 @@ Replace with:
 #endif
 ```
 
-- [ ] **Step 4: Guard the XShm helper and includes**
+- [x] **Step 4: Guard the XShm helper and includes**
 
 At the top of `PlatformPixelBuffer.cxx`, find:
 
@@ -611,7 +611,7 @@ Replace with:
 #endif
 ```
 
-- [ ] **Step 5: Syntax-check both files**
+- [x] **Step 5: Syntax-check both files**
 
 ```bash
 cd /data/home/qnxuser/dev/tigervnc
@@ -622,7 +622,7 @@ clang++ -std=gnu++11 -fsyntax-only -D__QNX__ -DHAVE_CONFIG_H \
 
 Expected: no errors (may warn about missing rfb headers — that is OK for a syntax check without full includes).
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add vncviewer/PlatformPixelBuffer.h vncviewer/PlatformPixelBuffer.cxx
@@ -639,7 +639,7 @@ git commit -m "port: guard PlatformPixelBuffer XShm/XImage code for __QNX__"
 
 On QNX with FLTK Wayland, keyboard events reach `Viewport::handle()` as `FL_KEYBOARD` / `FL_KEYUP`. FLTK's `Fl::event_key()` returns the XKB keysym (same values as X11). The system key code (used to match press/release) is the keysym itself.
 
-- [ ] **Step 1: Create KeyboardWayland.h**
+- [x] **Step 1: Create KeyboardWayland.h**
 
 ```cpp
 // vncviewer/KeyboardWayland.h
@@ -670,7 +670,7 @@ public:
 #endif
 ```
 
-- [ ] **Step 2: Create KeyboardWayland.cxx**
+- [x] **Step 2: Create KeyboardWayland.cxx**
 
 ```cpp
 // vncviewer/KeyboardWayland.cxx
@@ -734,7 +734,7 @@ void KeyboardWayland::setLEDState(unsigned /*state*/)
 }
 ```
 
-- [ ] **Step 3: Syntax-check both files**
+- [x] **Step 3: Syntax-check both files**
 
 ```bash
 cd /data/home/qnxuser/dev/tigervnc
@@ -745,7 +745,7 @@ clang++ -std=gnu++11 -fsyntax-only -D__QNX__ -DHAVE_CONFIG_H \
 
 Expected: no errors.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add vncviewer/KeyboardWayland.h vncviewer/KeyboardWayland.cxx
@@ -762,7 +762,7 @@ git commit -m "port: add KeyboardWayland (FLTK FL_KEYBOARD event routing)"
 
 These provide the same `x11_*` function names as `x11.h`/`x11.cxx` so that `DesktopWindow.cxx` and `OptionsDialog.cxx` need only an include-guard change.
 
-- [ ] **Step 1: Create wayland.h**
+- [x] **Step 1: Create wayland.h**
 
 ```cpp
 // vncviewer/wayland.h
@@ -799,7 +799,7 @@ bool x11_is_pointer_on_same_screen(Fl_Window* win);
 #endif
 ```
 
-- [ ] **Step 2: Create wayland.cxx**
+- [x] **Step 2: Create wayland.cxx**
 
 ```cpp
 // vncviewer/wayland.cxx
@@ -876,7 +876,7 @@ bool x11_is_pointer_on_same_screen(Fl_Window* /*win*/)
 }
 ```
 
-- [ ] **Step 3: Syntax-check**
+- [x] **Step 3: Syntax-check**
 
 ```bash
 cd /data/home/qnxuser/dev/tigervnc
@@ -889,7 +889,7 @@ Expected: no errors.
 
 Note: `win->maximize()` and `win->maximize_active()` are FLTK 1.4 API. If they produce "no member" errors at full build time, replace `x11_win_maximize` and `x11_win_is_maximized` with no-op stubs.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add vncviewer/wayland.h vncviewer/wayland.cxx
@@ -904,7 +904,7 @@ git commit -m "port: add wayland.h/wayland.cxx (x11_* stubs for Wayland)"
 - Modify: `vncviewer/touch.h`
 - Modify: `vncviewer/touch.cxx`
 
-- [ ] **Step 1: Add __QNX__ guard in touch.h**
+- [x] **Step 1: Add __QNX__ guard in touch.h**
 
 Find:
 
@@ -924,7 +924,7 @@ void x11_ungrab_pointer(Window window);
 #endif
 ```
 
-- [ ] **Step 2: Guard XInput2 includes in touch.cxx**
+- [x] **Step 2: Guard XInput2 includes in touch.cxx**
 
 Find:
 
@@ -950,7 +950,7 @@ Replace with:
 #endif
 ```
 
-- [ ] **Step 3: Guard `<FL/x.H>` include in touch.cxx**
+- [x] **Step 3: Guard `<FL/x.H>` include in touch.cxx**
 
 Find:
 
@@ -968,7 +968,7 @@ Replace with:
 #endif
 ```
 
-- [ ] **Step 4: Guard the xi_major variable and the XInput handler map**
+- [x] **Step 4: Guard the xi_major variable and the XInput handler map**
 
 Find:
 
@@ -991,7 +991,7 @@ static HandlerMap handlers;
 #endif
 ```
 
-- [ ] **Step 5: Guard enable_touch() and disable_touch() X11 bodies**
+- [x] **Step 5: Guard enable_touch() and disable_touch() X11 bodies**
 
 The `enable_touch()` and `disable_touch()` functions contain X11/XInput2 code under `!WIN32 && !APPLE`. Add `!__QNX__` guards throughout those functions.
 
@@ -1015,7 +1015,7 @@ In both, change to:
 
 Also change the corresponding `#endif` comments if any to keep them clear.
 
-- [ ] **Step 6: Guard x11_grab_pointer and x11_ungrab_pointer implementations**
+- [x] **Step 6: Guard x11_grab_pointer and x11_ungrab_pointer implementations**
 
 Find in touch.cxx:
 
@@ -1054,7 +1054,7 @@ Add after that closing brace:
 #endif // !WIN32 && !APPLE && !QNX
 ```
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add vncviewer/touch.h vncviewer/touch.cxx
@@ -1068,7 +1068,7 @@ git commit -m "port: guard XInput2 and pointer grab code for __QNX__"
 **Files:**
 - Modify: `vncviewer/Viewport.cxx`
 
-- [ ] **Step 1: Add QNX keyboard include**
+- [x] **Step 1: Add QNX keyboard include**
 
 Find:
 
@@ -1104,7 +1104,7 @@ Replace with:
 #endif
 ```
 
-- [ ] **Step 2: Add QNX keyboard instantiation**
+- [x] **Step 2: Add QNX keyboard instantiation**
 
 Find:
 
@@ -1140,7 +1140,7 @@ Replace with:
 #endif
 ```
 
-- [ ] **Step 3: Route FL_KEYBOARD/FL_KEYUP to KeyboardWayland in handle()**
+- [x] **Step 3: Route FL_KEYBOARD/FL_KEYUP to KeyboardWayland in handle()**
 
 Find in `Viewport::handle()`:
 
@@ -1173,7 +1173,7 @@ Replace with:
     return 1;
 ```
 
-- [ ] **Step 4: Guard <FL/x.H> include in Viewport.cxx**
+- [x] **Step 4: Guard <FL/x.H> include in Viewport.cxx**
 
 Find:
 
@@ -1189,7 +1189,7 @@ Replace with:
 #endif
 ```
 
-- [ ] **Step 5: Syntax-check Viewport.cxx**
+- [x] **Step 5: Syntax-check Viewport.cxx**
 
 ```bash
 cd /data/home/qnxuser/dev/tigervnc
@@ -1200,7 +1200,7 @@ clang++ -std=gnu++11 -fsyntax-only -D__QNX__ -DHAVE_CONFIG_H \
 
 Expected: errors only about missing rfb/ headers (not about undefined x11 types or XEvent). If `WaylandKeyEvent` appears undefined, verify `KeyboardWayland.h` is included.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add vncviewer/Viewport.cxx
@@ -1215,7 +1215,7 @@ git commit -m "port: route keyboard events to KeyboardWayland on __QNX__"
 - Modify: `vncviewer/DesktopWindow.cxx`
 - Modify: `vncviewer/OptionsDialog.cxx`
 
-- [ ] **Step 1: Replace x11.h include in DesktopWindow.cxx**
+- [x] **Step 1: Replace x11.h include in DesktopWindow.cxx**
 
 Find (near line 62):
 
@@ -1251,7 +1251,7 @@ Replace with:
 #endif
 ```
 
-- [ ] **Step 2: Guard <FL/x.H> in DesktopWindow.cxx**
+- [x] **Step 2: Guard <FL/x.H> in DesktopWindow.cxx**
 
 Find (around line 54):
 
@@ -1267,7 +1267,7 @@ Replace with:
 #endif
 ```
 
-- [ ] **Step 3: Guard grabKeyboard() X11 branch in DesktopWindow.cxx**
+- [x] **Step 3: Guard grabKeyboard() X11 branch in DesktopWindow.cxx**
 
 Find inside `grabKeyboard()`:
 
@@ -1301,7 +1301,7 @@ Replace with:
 #endif
 ```
 
-- [ ] **Step 4: Guard ungrabKeyboard() X11 branch in DesktopWindow.cxx**
+- [x] **Step 4: Guard ungrabKeyboard() X11 branch in DesktopWindow.cxx**
 
 Find inside `ungrabKeyboard()`:
 
@@ -1329,7 +1329,7 @@ Replace with:
 #endif
 ```
 
-- [ ] **Step 5: Guard grabPointer() and ungrabPointer() X11 calls**
+- [x] **Step 5: Guard grabPointer() and ungrabPointer() X11 calls**
 
 Find in `grabPointer()`:
 
@@ -1375,7 +1375,7 @@ Replace with:
 #endif
 ```
 
-- [ ] **Step 6: Replace x11.h include in OptionsDialog.cxx**
+- [x] **Step 6: Replace x11.h include in OptionsDialog.cxx**
 
 Find (around line 54):
 
@@ -1395,7 +1395,7 @@ Replace with:
 #endif
 ```
 
-- [ ] **Step 7: Guard OptionsDialog WM detection for QNX**
+- [x] **Step 7: Guard OptionsDialog WM detection for QNX**
 
 Find in OptionsDialog.cxx (around line 1182):
 
@@ -1426,7 +1426,7 @@ Replace with:
 #endif
 ```
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add vncviewer/DesktopWindow.cxx vncviewer/OptionsDialog.cxx
@@ -1440,7 +1440,7 @@ git commit -m "port: add __QNX__ guards in DesktopWindow and OptionsDialog"
 **Files:**
 - Modify: `vncviewer/CMakeLists.txt`
 
-- [ ] **Step 1: Add QNX source/link block**
+- [x] **Step 1: Add QNX source/link block**
 
 Find in `vncviewer/CMakeLists.txt`:
 
@@ -1468,7 +1468,7 @@ else()
 endif()
 ```
 
-- [ ] **Step 2: Remove X11 link libraries for QNX**
+- [x] **Step 2: Remove X11 link libraries for QNX**
 
 Find at the bottom of the file:
 
@@ -1494,7 +1494,7 @@ elseif(NOT CMAKE_SYSTEM_NAME STREQUAL "QNX")
 endif()
 ```
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add vncviewer/CMakeLists.txt
