@@ -49,7 +49,9 @@
 
 #include "fltk/layout.h"
 #include "fltk/util.h"
+#ifndef __QNX__
 #include "fltk/Fl_Suggestion_Input.h"
+#endif
 #include "ServerDialog.h"
 #include "OptionsDialog.h"
 #include "i18n.h"
@@ -70,11 +72,19 @@ ServerDialog::ServerDialog()
   x = OUTER_MARGIN;
   y = OUTER_MARGIN;
 
+#ifdef __QNX__
+  serverName = new Fl_Input(
+    LBLLEFT(x, y, w() - OUTER_MARGIN*2, INPUT_HEIGHT, _("VNC server:"))
+  );
+#else
   serverName = new Fl_Suggestion_Input(
     LBLLEFT(x, y, w() - OUTER_MARGIN*2, INPUT_HEIGHT, _("VNC server:")), {}
   );
+#endif
+#ifndef __QNX__
   serverName->call_on_remove(onServerHistoryRemove, this);
   serverName->call_to_normalize(serverHistoryNormalize);
+#endif
 
   y += INPUT_HEIGHT + INNER_MARGIN;
 
@@ -140,7 +150,9 @@ void ServerDialog::run(const char* servername, char *newservername)
 
   try {
     dialog.loadServerHistory();
+#ifndef __QNX__
     dialog.serverName->set_suggestions(dialog.serverHistory);
+#endif
   } catch (std::exception& e) {
     vlog.error(_("Unable to load the server history: %s"), e.what());
   }

@@ -20,10 +20,17 @@
 #define __SERVERDIALOG_H__
 
 #include <FL/Fl_Window.H>
+#include <FL/Fl_Input.H>
 #include <string>
 #include <list>
 
+#ifdef __QNX__
+// Suggestion popup creates a second xdg_toplevel which crashes the QNX
+// Wayland compositor.  Use a plain Fl_Input instead.
+typedef Fl_Input Fl_Suggestion_Input;
+#else
 #include "fltk/Fl_Suggestion_Input.h"
+#endif
 
 class Fl_Widget;
 class Fl_Input_Choice;
