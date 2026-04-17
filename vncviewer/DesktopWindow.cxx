@@ -51,13 +51,17 @@
 #include <FL/Fl_Image_Surface.H>
 #include <FL/Fl_Scrollbar.H>
 #include <FL/fl_draw.H>
+#if !defined(__QNX__)
 #include <FL/x.H>
+#endif
 
 #if defined(WIN32)
 #include "win32.h"
 #elif defined(__APPLE__)
 #include "cocoa.h"
 #include <Carbon/Carbon.h>
+#elif defined(__QNX__)
+#include "wayland.h"
 #else
 #include "x11.h"
 #endif
@@ -749,7 +753,7 @@ void DesktopWindow::addOverlay(const char *text)
 
   struct Overlay overlay;
 
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__QNX__)
   // FLTK < 1.3.5 crashes if fl_gc is unset
   if (!fl_gc)
     fl_gc = XDefaultGC(fl_display, 0);
@@ -948,7 +952,7 @@ int DesktopWindow::handle(int event)
 
 int DesktopWindow::fltkDispatch(int event, Fl_Window *win, void *)
 {
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__QNX__)
   // FLTK passes through the fake grab focus events that can cause us
   // to end up in an infinite loop
   // https://github.com/fltk/fltk/issues/295
@@ -1162,6 +1166,8 @@ void DesktopWindow::grabKeyboard()
     addOverlayError(_("Failure grabbing control of the keyboard"));
     return;
   }
+#elif defined(__QNX__)
+  x11_grab_keyboard(this);
 #else
   bool ret;
 
@@ -1202,6 +1208,8 @@ void DesktopWindow::ungrabKeyboard()
   win32_disable_lowlevel_keyboard(fl_xid(this));
 #elif defined(__APPLE__)
   cocoa_untap_keyboard();
+#elif defined(__QNX__)
+  x11_ungrab_keyboard();
 #else
   // FLTK has a grab so lets not mess with it
   if (Fl::grab())
@@ -1214,7 +1222,7 @@ void DesktopWindow::ungrabKeyboard()
 
 void DesktopWindow::grabPointer()
 {
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__QNX__)
   // We also need to grab the pointer as some WMs like to grab buttons
   // combined with modifies (e.g. Alt+Button0 in metacity).
 
@@ -1232,7 +1240,7 @@ void DesktopWindow::ungrabPointer()
 {
   mouseGrabbed = false;
 
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__QNX__)
   x11_ungrab_pointer(fl_xid(this));
 #endif
 }
@@ -1686,7 +1694,7 @@ void DesktopWindow::handleStatsTimeout(void *data)
   self->statsLastPixels = pixels;
   self->statsLastPosition = pos;
 
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__QNX__)
   // FLTK < 1.3.5 crashes if fl_gc is unset
   if (!fl_gc)
     fl_gc = XDefaultGC(fl_display, 0);

@@ -51,7 +51,9 @@
 #include "cocoa.h"
 #endif
 
-#if !defined(WIN32) && !defined(__APPLE__)
+#if defined(__QNX__)
+#include "wayland.h"
+#elif !defined(WIN32) && !defined(__APPLE__)
 #include "x11.h"
 #endif
 
@@ -1177,6 +1179,8 @@ void OptionsDialog::createDisplayPage(int tx, int ty, int tw, int th)
     supportsMultihead = true;
 #elif defined(__APPLE__)
     supportsMultihead = !cocoa_screens_have_separate_spaces();
+#elif defined(__QNX__)
+    supportsMultihead = false;
 #else
     // FLTK will emulate multihead support without a WM
     if (!x11_has_wm())
