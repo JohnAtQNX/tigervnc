@@ -532,6 +532,7 @@ std::string Fl_Monitor_Arrangement::get_monitor_name(int m)
   return name;
 
 #endif // !HAVE_XRANDR
+  (void)m;
   return "";
 #endif
 }

@@ -710,7 +710,7 @@ int main(int argc, char** argv)
   // Handle any old settings specified on the command line
   migrateDeprecatedOptions();
 
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__QNX__)
   if (strcmp(display, "") != 0) {
     Fl::display(display);
   }

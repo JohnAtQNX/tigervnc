@@ -76,7 +76,11 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 
 # Tell the compiler to be stringent
-add_compile_definitions(_FORTIFY_SOURCE=2)
+# Skip _FORTIFY_SOURCE=2 on QNX: the QNX wchar_chk.h uses __bvap (GCC-specific
+# builtin) inside __FORTIFY_FUNCTION inlines, which clang does not support.
+if(NOT CMAKE_SYSTEM_NAME STREQUAL "QNX")
+  add_compile_definitions(_FORTIFY_SOURCE=2)
+endif()
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wformat=2 -Wvla")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wformat=2 -Wvla")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wzero-as-null-pointer-constant")
@@ -361,7 +365,7 @@ if (ENABLE_NETTLE)
 endif()
 
 # Check for PAM library
-if(UNIX AND NOT APPLE)
+if(UNIX AND NOT APPLE AND NOT CMAKE_SYSTEM_NAME STREQUAL "QNX")
   find_package(PAM REQUIRED)
 endif()
 

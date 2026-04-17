@@ -432,7 +432,8 @@ bool CConn::verifyCertificate(unsigned int status,
                               const uint8_t* certificate, size_t length)
 {
 #ifndef HAVE_GNUTLS
-  throw rdr::Exception(_("TLS support not enabled"));
+  (void)status; (void)certificate; (void)length;
+  throw std::runtime_error(_("TLS support not enabled"));
 #else
   const unsigned allowed_errors =
     GNUTLS_CERT_INVALID |
