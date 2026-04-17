@@ -1507,7 +1507,7 @@ git commit -m "port: add QNX Wayland source/link block to vncviewer CMakeLists"
 
 **Files:** none (build verification)
 
-- [ ] **Step 1: Configure the build for QNX**
+- [x] **Step 1: Configure the build for QNX**
 
 ```bash
 mkdir -p /tmp/tigervnc-build
@@ -1533,7 +1533,7 @@ If cmake tries to build the Xorg server (`unix/xserver`), add:
   -DBUILD_XORG_SERVER=OFF -DBUILD_XVNC=OFF
 ```
 
-- [ ] **Step 2: Build vncviewer only**
+- [x] **Step 2: Build vncviewer only**
 
 ```bash
 cmake --build /tmp/tigervnc-build --target vncviewer -j$(nproc) 2>&1 | tail -50
@@ -1546,7 +1546,7 @@ If errors appear:
 - Undefined `Fl_Window::maximize()`: FLTK version doesn't have it — replace with no-op in `wayland.cxx`.
 - Undefined `WaylandKeyEvent`: check the `KeyboardWayland.h` include in `Viewport.cxx`.
 
-- [ ] **Step 3: Smoke-test — help output**
+- [x] **Step 3: Smoke-test — help output**
 
 ```bash
 /tmp/tigervnc-build/vncviewer/vncviewer --help 2>&1 | head -10
