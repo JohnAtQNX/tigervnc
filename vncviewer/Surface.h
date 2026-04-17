@@ -24,6 +24,8 @@
 #elif defined(__APPLE__)
 // Apple headers conflict with FLTK, so redefine types here
 typedef struct CGImage* CGImageRef;
+#elif defined(__QNX__)
+// No platform headers needed for Wayland backend
 #else
 #include <X11/extensions/Xrender.h>
 #endif
@@ -62,7 +64,7 @@ protected:
 #if defined(WIN32)
   RGBQUAD* data;
   HBITMAP bitmap;
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) || defined(__QNX__)
   unsigned char* data;
 #else
   Pixmap pixmap;
