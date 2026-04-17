@@ -23,7 +23,7 @@
 #include <assert.h>
 #include <stdlib.h>
 
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__QNX__)
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #endif
@@ -31,7 +31,9 @@
 #include <stdexcept>
 
 #include <FL/Fl.H>
+#if !defined(__QNX__)
 #include <FL/x.H>
+#endif
 
 #include <core/LogWriter.h>
 
@@ -40,15 +42,24 @@
 static core::LogWriter vlog("PlatformPixelBuffer");
 
 PlatformPixelBuffer::PlatformPixelBuffer(int width, int height) :
+#if defined(__QNX__)
+  FullFramePixelBuffer(rfb::PixelFormat(32, 24, false, true,
+                                        255, 255, 255, 0, 8, 16),
+                       0, 0, nullptr, 0),
+#else
   FullFramePixelBuffer(rfb::PixelFormat(32, 24, false, true,
                                         255, 255, 255, 16, 8, 0),
                        0, 0, nullptr, 0),
+#endif
   Surface(width, height)
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__QNX__)
   , shminfo(nullptr), xim(nullptr)
 #endif
 {
-#if !defined(WIN32) && !defined(__APPLE__)
+#if defined(__QNX__)
+  // Use RGBA pixel buffer; Surface::data is allocated by Surface(width,height)
+  setBuffer(width, height, (uint8_t*)Surface::data, width);
+#elif !defined(WIN32) && !defined(__APPLE__)
   if (!setupShm(width, height)) {
     xim = XCreateImage(fl_display, (Visual*)CopyFromParent, 32,
                        ZPixmap, 0, nullptr, width, height, 32, 0);
@@ -74,7 +85,7 @@ PlatformPixelBuffer::PlatformPixelBuffer(int width, int height) :
 
 PlatformPixelBuffer::~PlatformPixelBuffer()
 {
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__QNX__)
   if (shminfo) {
     vlog.debug("Freeing shared memory XImage");
     XShmDetach(fl_display, shminfo);
@@ -108,7 +119,7 @@ core::Rect PlatformPixelBuffer::getDamage(void)
   damage.clear();
   mutex.unlock();
 
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__QNX__)
   if (r.width() == 0 || r.height() == 0)
     return r;
 
@@ -132,7 +143,7 @@ core::Rect PlatformPixelBuffer::getDamage(void)
   return r;
 }
 
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__QNX__)
 
 static bool caughtError;
 

@@ -19,7 +19,7 @@
 #ifndef __PLATFORMPIXELBUFFER_H__
 #define __PLATFORMPIXELBUFFER_H__
 
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__QNX__)
 #include <X11/Xlib.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
@@ -51,7 +51,7 @@ protected:
   std::mutex mutex;
   core::Region damage;
 
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__QNX__)
 protected:
   bool setupShm(int width, int height);
 
